@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MutualFund {
+  fund_id      Int      @id @default(autoincrement())
+  fund_name    String
+  category     String
+  fund_manager String
+  expense_ratio Float
+  aum         Float
+  nav         Float
+  holdings    FundHolding[]
+}
+
+model Company {
+  company_id   Int      @id @default(autoincrement())
+  company_name String
+  sector       String
+  market_cap   Float
+  holdings     FundHolding[]
+}
+
+model FundHolding {
+  holding_id    Int      @id @default(autoincrement())
+  fund         MutualFund @relation(fields: [fund_id], references: [fund_id])
+  fund_id       Int
+  company      Company   @relation(fields: [company_id], references: [company_id])
+  company_id    Int
+  aum_percentage Float
+  num_of_shares Int
+  report_date   DateTime
+}
